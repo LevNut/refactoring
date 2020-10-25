@@ -1,69 +1,117 @@
-# Programming Assignment 4
-## Dragon Tiger Game
+# Refactoring
 
-*by Pitchapa Sae-lim*
+From Pitchapa Sae-lim: https://github.com/PitchapaSaelim/pa4-PitchapaSaelim
 
-### Introduction
+### Move class 
+
+---
+
+In `src/dragontiger/GameUI.java` class, there are many classes that make
+ the line become too long in `GameUI.java` file.
+
+For Example:
+
+    class ChooseDrawHandler implements EventHandler<ActionEvent> {
     
-Dragon Tiger Game is about as simple as gambling gets. It is basically a two-card version of baccarat. To be more specific, two cards are drawn, one to the Dragon and one to the Tiger. The player bets on which one will be higher. There are also some proposition bets on the individual cards. The game is rumored to be found in Cambodia.
+        private final GameUI gameUI;
+    
+        public ChooseDrawHandler(GameUI gameUI) {
+            this.gameUI = gameUI;
+        }
+    
+        @Override
+        public void handle(ActionEvent actionEvent) {
+            gameUI.chooseDraw();
+            gameUI.text.setStyle("-fx-text-fill: #92e75c");
+            gameUI.text.setText("DRAW");
+            gameUI.display();
+        }
+    }
+
+All of these class can be classified in to their own separated file for the easy changes.
+
+In `src/dragontiger` can be classified to:
+
+    dragontiger/
+        ChangeChipsHandler
+        ChooseDragonHandler
+        ChooseDrawHandler
+        ChooseTigerHandler
+        ClearHandler
+        ConfirmHandler
+        Controller
+        DragonTigerGame
+        ExitHandler
+        GameText
+        GameUI
+        HowToPlayHandler
+        NewGameHandler
+        OpenCardHandler
+        
+        
+     
+### Extract Method
+
+---
+In `src/dragontiger/ConfirmHandler.java`, there are some duplicated code.
+
+Alert had been called many times in `if`, `else if`,and `else`, so instead of calling them repeatedly.
+        
+    if (getTextBets.isEmpty()) {
+                    inputBets.setStyle("-fx-text-box-border: red");
+                    alert.setAlertType(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Please fill in information.");
+                    alert.showAndWait();
+     if (!getTextBets.isEmpty()) {
+                     if (!scanText.hasNextInt()) {
+                         try {
+                             userBets = Integer.parseInt(getTextBets);
+                         } catch (NumberFormatException nfe) {
+                             ...
+                         }
+     } else if (!(chooseSides == 0 || chooseSides == 1 || chooseSides == 2)) {
+         ...
+     } else {
+         ... 
+     }
+                    
+To remove the duplicate code, make a method that handle the alert situation.
+
+        private void AlertSetup(Alert alert, Alert.AlertType error, String error2, String s) {
+            alert.setAlertType(error);
+            alert.setTitle(error2);
+            alert.setHeaderText(null);
+            alert.setContentText(s);
+            alert.showAndWait();
+        }
 
 
-![pa4-PitchapaSaelim](dragontiger.gif)
+### Clean up code
 
+---
 
-### UML class diagram of Dragon Tiger Game
+In `src/dragontiger/OpenCardHandler.java`, there are some code that didn't do anything.
 
+At `if` statement, it shows that when win is not equal to 2, the `userBets` will equal to
+itself multiply by one.
 
-![Imgur](https://i.imgur.com/wqeYVKu.png)
+So instead of this:
 
+    if (chooseSides == win) {
+                        if (win != 2) {
+                            userBets = userBets * 1;
+                        } else {
+                            userBets = userBets * 7;
+                        }
+    
+    
+changed to:
 
-### How to play Dragon Tiger Game
-
-    First, you should bet on Dragon or Tiger or Draw. Then, you enter the amount of chips that you wants to bet. After that, click the confirm and opens the card.
-      
-               ♠ Dragon is higher than Tiger. ♠
-
-                   ♣ If you bet on Dragon, you win and receive chips from your bet.
-                   ♣ If you bet on Tiger, you lose and lose chips from your bet.
-                   ♣ If you bet on Draw, you lose and lose chips from your bet.
-
-                ♠ Tiger is higher than Dragon. ♠
-      
-                    ♣ If you bet on Dragon, you lose and lose chips from your bet.
-                    ♣ If you bet on Tiger, you win and receive chips from your bet.
-                    ♣ If you bet on Draw, you lose and lose chips from your bet. 
-
-                 ♠ Dragon is the same as Tiger. 
-
-                    ♣ If you bet on Dragon, you lose and lose half of chips from your bet.
-                    ♣ If you bet on Tiger, you lose and lose half of chips from your bet.
-                    ♣ If you bet on Draw,  you win and receive chips from your bet.
-
-                                  Sorting the cards from highest to lowest :
-                              K > Q > J > 10 > 9 > 8 > 7 > 6 > 5 > 4 > 3 > 2 > A
-   
-                         * Suppose that “A” is equal to 1 and suit has no effect. *
-
-
-### How to run JAR file
-
-* Open the command line window.
-
-* Change directory to the directory that contain `JAR file`.
-
-* The command is:
-
-    > java -jar DragonTigerGame.jar
-
-    *For Java 11 you need to specify the module path for JavaFX. Enter:*
-
-    > java --module-path /path/to/javafx11/lib/ --add-modules javafx.controls -jar DragonTigerGame.jar
-
-
-### How to run Dragon Tiger Game in code editor
-
-* Open code editor.
-
-* Run `DragonTigerGame.java`
-
+    if (gameUI.chooseSides == win) {
+                    if (win == 2) {
+                        gameUI.userBets = gameUI.userBets * 7;
+                    }
+    
 
