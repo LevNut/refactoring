@@ -47,9 +47,7 @@ class OpenCardHandler implements EventHandler<ActionEvent> {
             }
 
             if (gameUI.chooseSides == win) {
-                if (win != 2) {
-                    gameUI.userBets = gameUI.userBets * 1;
-                } else {
+                if (win == 2) {
                     gameUI.userBets = gameUI.userBets * 7;
                 }
                 gameUI.userChips = gameUI.userChips + gameUI.userBets;

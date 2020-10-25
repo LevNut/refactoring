@@ -27,11 +27,7 @@ class ConfirmHandler implements EventHandler<ActionEvent> {
 
         if (gameUI.getTextBets.isEmpty()) {
             gameUI.inputBets.setStyle("-fx-text-box-border: red");
-            alert.setAlertType(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText(null);
-            alert.setContentText("Please fill in information.");
-            alert.showAndWait();
+            AlertSetup(alert, Alert.AlertType.ERROR, "Error", "Please fill in information.");
         }
         if (!gameUI.getTextBets.isEmpty()) {
             if (!scanText.hasNextInt()) {
@@ -39,49 +35,37 @@ class ConfirmHandler implements EventHandler<ActionEvent> {
                     gameUI.userBets = Integer.parseInt(gameUI.getTextBets);
                 } catch (NumberFormatException nfe) {
                     gameUI.inputBets.setStyle("-fx-text-box-border: red");
-                    alert.setAlertType(Alert.AlertType.ERROR);
-                    alert.setTitle("Error");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Not an Integer Number!");
-                    alert.showAndWait();
+                    AlertSetup(alert, Alert.AlertType.ERROR, "Error", "Not an Integer Number!");
                 }
             } else if (!(gameUI.chooseSides == 0 || gameUI.chooseSides == 1 || gameUI.chooseSides == 2)) {
                 gameUI.inputBets.setStyle("-fx-text-box-border: red");
-                alert.setAlertType(Alert.AlertType.ERROR);
-                alert.setTitle("Error");
-                alert.setHeaderText(null);
-                alert.setContentText("Please Choose dragon OR tiger OR draw.");
-                alert.showAndWait();
+                AlertSetup(alert, Alert.AlertType.ERROR, "Error", "Please Choose dragon OR tiger OR draw.");
             } else {
                 try {
                     gameUI.userBets = Integer.parseInt(gameUI.getTextBets);
                     if ((gameUI.userBets > gameUI.userChips) || (gameUI.userBets <= 0)) {
                         gameUI.inputBets.setStyle("-fx-text-box-border: #ffd811");
-                        alert.setAlertType(Alert.AlertType.WARNING);
-                        alert.setTitle("Sorry");
-                        alert.setHeaderText(null);
-                        alert.setContentText("You have lost all your chips.");
-                        alert.showAndWait();
+                        AlertSetup(alert, Alert.AlertType.WARNING, "Sorry", "You have lost all your chips.");
                         gameUI.passConfirm = false;
                     } else {
                         gameUI.inputBets.setStyle(null);
                         gameUI.inputBets.setStyle("-fx-text-box-border: #2c5df1");
-                        alert.setAlertType(Alert.AlertType.INFORMATION);
-                        alert.setTitle("Success");
-                        alert.setHeaderText(null);
-                        alert.setContentText("Bet Successful!");
-                        alert.showAndWait();
+                        AlertSetup(alert, Alert.AlertType.INFORMATION, "Success", "Bet Successful!");
                         gameUI.passConfirm = true;
                     }
                 } catch (Exception e) {
                     gameUI.inputBets.setStyle("-fx-text-box-border: red");
-                    alert.setAlertType(Alert.AlertType.ERROR);
-                    alert.setTitle("Error");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Error message!");
-                    alert.showAndWait();
+                    AlertSetup(alert, Alert.AlertType.ERROR, "Error", "Error message!");
                 }
             }
         }
+    }
+
+    private void AlertSetup(Alert alert, Alert.AlertType error, String error2, String s) {
+        alert.setAlertType(error);
+        alert.setTitle(error2);
+        alert.setHeaderText(null);
+        alert.setContentText(s);
+        alert.showAndWait();
     }
 }
